@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track your personal income and expenses.">
+  <title>Personal Expense Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-icon">₹</span>
+      <span>Expense<span class="brand-light">Track</span></span>
+    </a>
+    <span class="topbar-label">PERSONAL FINANCE</span>
+  </header>
+
+  <main class="container">
+    <section class="welcome">
+      <div>
+        <p class="eyebrow">YOUR MONEY, YOUR CONTROL</p>
+        <h1>Personal Expense Tracker</h1>
+        <p class="muted">Understand your spending. Make better decisions.</p>
+      </div>
+      <button id="addButton" class="primary-button" type="button">
+        + Add transaction
+      </button>
+    </section>
+
+    <section class="summary-grid" aria-label="Financial summary">
+      <article class="summary-card">
+        <div class="card-heading">
+          <span>Total income</span>
+          <span class="summary-icon income-icon">↗</span>
+        </div>
+        <p id="totalIncome" class="summary-amount">₹0.00</p>
+        <p class="card-note">Money received</p>
+      </article>
+
+      <article class="summary-card">
+        <div class="card-heading">
+          <span>Total expenses</span>
+          <span class="summary-icon expense-icon">↘</span>
+        </div>
+        <p id="totalExpenses" class="summary-amount">₹0.00</p>
+        <p class="card-note">Money spent</p>
+      </article>
+
+      <article class="summary-card balance-card">
+        <div class="card-heading">
+          <span>Remaining balance</span>
+          <span class="summary-icon balance-icon">₹</span>
+        </div>
+        <p id="balance" class="summary-amount">₹0.00</p>
+        <p class="card-note">Income minus expenses</p>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel chart-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Spending overview</h2>
+            <p class="muted">Expenses grouped by category</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="expenseChart" aria-label="Expenses by category"></canvas>
+        </div>
+        <p id="chartMessage" class="muted empty-chart">
+          Add expenses to see your spending chart.
+        </p>
+      </article>
+
+      <article class="panel form-panel" id="formPanel">
+        <div class="panel-heading">
+          <div>
+            <h2 id="formTitle">Add transaction</h2>
+            <p class="muted">Record income or an expense.</p>
+          </div>
+        </div>
+
+        <form id="transactionForm">
+          <label for="type">Transaction type</label>
+          <select id="type" name="type" required>
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+
+          <label for="description">Description</label>
+          <input id="description" name="description"
+                 type="text" maxlength="100"
+                 placeholder="e.g. Grocery shopping" required>
+
+          <label for="amount">Amount (₹)</label>
+          <input id="amount" name="amount" type="number"
+                 min="0.01" max="1000000000" step="0.01"
+                 placeholder="e.g. 500" required>
+
+          <label for="category">Category</label>
+          <select id="category" name="category" required></select>
+
+          <label for="date">Date</label>
+          <input id="date" name="date" type="date" required>
+
+          <div class="form-actions">
+            <button id="saveButton" class="primary-button" type="submit">
+              Save transaction
+            </button>
+            <button id="cancelButton" class="secondary-button hidden"
+                    type="button">Cancel edit</button>
+          </div>
+
+          <p id="formMessage" class="form-message" role="status"
+             aria-live="polite"></p>
+        </form>
+      </article>
+    </section>
+
+    <section class="panel history-panel">
+      <div class="panel-heading history-heading">
+        <div>
+          <h2>Transaction history</h2>
+          <p class="muted">Search, filter, edit, or delete your records.</p>
+        </div>
+        <span id="transactionCount" class="count-badge">0 records</span>
+      </div>
+
+      <div class="filters">
+        <div class="search-wrap">
+          <label class="visually-hidden" for="search">Search transactions</label>
+          <input id="search" type="search"
+                 placeholder="Search description...">
+        </div>
+
+        <div>
+          <label class="visually-hidden" for="filterType">Filter by type</label>
+          <select id="filterType">
+            <option value="">All types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="visually-hidden" for="filterCategory">
+            Filter by category
+          </label>
+          <select id="filterCategory">
+            <option value="">All categories</option>
+          </select>
+        </div>
+
+        <button id="clearFilters" class="secondary-button" type="button">
+          Clear filters
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th class="amount-column">Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="transactionList">
+            <tr>
+              <td colspan="6" class="empty-state">Loading transactions...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="listMessage" class="muted list-message"></p>
+    </section>
+
+    <footer>
+      <p>Personal Expense Tracker · Built with HTML, CSS, JavaScript, Node.js and SQLite</p>
+    </footer>
+  </main>
+</body>
+</html>
