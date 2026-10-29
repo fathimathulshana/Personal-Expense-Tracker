@@ -95,3 +95,10 @@ FinTrack – Personal Expense Tracker
 
 ## Version
 1.0.0
+## Project Completion
+
+FinTrack is a personal expense tracking application developed to help users manage their income and expenses efficiently.
+
+This project was developed as an academic project using HTML, CSS, JavaScript, Node.js, Express.js, and SQLite.
+
+Thank you for using FinTrack!
