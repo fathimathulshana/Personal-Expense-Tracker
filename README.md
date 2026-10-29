@@ -80,3 +80,18 @@ category, date, and creation timestamp.
 
 This project demonstrates frontend development, backend API
 development, database operations, and version control.
+## Key Features
+
+- Add income and expense transactions.
+- Edit and delete transactions.
+- Categorize financial activities.
+- View total income, expenses, and balance.
+- Search and filter transactions.
+- View transaction history.
+- Monitor personal finances through the dashboard.
+
+## Project Name
+FinTrack – Personal Expense Tracker
+
+## Version
+1.0.0
