@@ -528,3 +528,17 @@ footer {
     padding-right: 18px;
   }
 }
+/* Footer styling */
+.footer {
+    background-color: #1e293b;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.footer p {
+    margin: 5px 0;
+}
