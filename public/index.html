@@ -10,13 +10,22 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="./app.js" defer></script>
 </head>
-<body>
+<body data-theme="pink">
   <header class="topbar">
     <a class="brand" href="./">
       <span class="brand-icon">₹</span>
       <span>Expense<span class="brand-light">Track</span></span>
     </a>
-    <span class="topbar-label">PERSONAL FINANCE</span>
+    <div class="topbar-tools">
+      <span class="topbar-label">PERSONAL FINANCE</span>
+      <label class="visually-hidden" for="themeSelect">Color theme</label>
+      <select id="themeSelect" class="theme-select" aria-label="Color theme">
+        <option value="pink">Rose Quartz</option>
+        <option value="lavender">Lavender Dream</option>
+        <option value="peach">Peach Blossom</option>
+        <option value="berry">Berry Sweet</option>
+      </select>
+    </div>
   </header>
 
   <main class="container">

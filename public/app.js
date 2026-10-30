@@ -16,6 +16,7 @@ const filterType = document.getElementById("filterType");
 const filterCategory = document.getElementById("filterCategory");
 const transactionList = document.getElementById("transactionList");
 const listMessage = document.getElementById("listMessage");
+const themeSelect = document.getElementById("themeSelect");
 
 const categories = {
   income: ["Salary", "Freelance", "Investment", "Gift", "Other"],
@@ -57,6 +58,17 @@ function showFormMessage(message, success = false) {
   formMessage.textContent = message;
   formMessage.classList.toggle("success", success);
 }
+
+function applyTheme(theme) {
+  const allowedThemes = ["pink", "lavender", "peach", "berry"];
+  const selectedTheme = allowedThemes.includes(theme) ? theme : "pink";
+  document.body.dataset.theme = selectedTheme;
+  themeSelect.value = selectedTheme;
+  localStorage.setItem("fintrack.theme", selectedTheme);
+}
+
+themeSelect.addEventListener("change", () => applyTheme(themeSelect.value));
+applyTheme(localStorage.getItem("fintrack.theme") || "pink");
 
 async function apiRequest(url, options = {}) {
   const transactions = JSON.parse(localStorage.getItem("fintrack.transactions") || "[]");
