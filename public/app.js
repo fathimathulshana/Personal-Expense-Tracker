@@ -19,6 +19,8 @@ const listMessage = document.getElementById("listMessage");
 const themeSelect = document.getElementById("themeSelect");
 const modeToggle = document.getElementById("modeToggle");
 const modeLabel = document.getElementById("modeLabel");
+const budgetForm = document.getElementById("budgetForm");
+const budgetAmountInput = document.getElementById("budgetAmount");
 
 const categories = {
   income: ["Salary", "Freelance", "Investment", "Gift", "Other"],
@@ -54,6 +56,70 @@ function todayString() {
     now.getTime() - now.getTimezoneOffset() * 60000
   );
   return localDate.toISOString().slice(0, 10);
+}
+
+function currentMonthKey() {
+  return todayString().slice(0, 7);
+}
+
+function updateBudgetDashboard() {
+  const monthKey = currentMonthKey();
+  const budgets = JSON.parse(localStorage.getItem("fintrack.budgets") || "{}");
+  const transactions = JSON.parse(localStorage.getItem("fintrack.transactions") || "[]");
+  const budget = Number(budgets[monthKey]) || 0;
+  const spent = transactions
+    .filter((item) => item.type === "expense" && item.date.startsWith(monthKey))
+    .reduce((sum, item) => sum + Number(item.amount), 0);
+  const remaining = budget - spent;
+  const points = budget > 0 && remaining > 0
+    ? Math.floor((remaining + 1e-9) / 100)
+    : 0;
+
+  document.getElementById("budgetMonth").textContent = new Intl.DateTimeFormat(
+    "en-IN",
+    { month: "long", year: "numeric" }
+  ).format(new Date(`${monthKey}-01T00:00:00`));
+  document.getElementById("monthlySpent").textContent = formatMoney(spent);
+  document.getElementById("pointsTotal").textContent = String(points);
+  budgetAmountInput.value = budget > 0 ? String(budget) : "";
+
+  const remainingLabel = document.getElementById("budgetRemainingLabel");
+  const remainingValue = document.getElementById("budgetRemaining");
+  const progressTrack = document.getElementById("budgetProgressTrack");
+  const progressBar = document.getElementById("budgetProgressBar");
+  const budgetMessage = document.getElementById("budgetMessage");
+
+  if (budget <= 0) {
+    remainingLabel.textContent = "Left in budget";
+    remainingValue.textContent = "Set a budget";
+    progressBar.style.width = "0%";
+    progressTrack.setAttribute("aria-valuenow", "0");
+    progressTrack.classList.remove("over-budget");
+    budgetMessage.textContent = "Set a monthly budget to see your spending progress and earn points.";
+    return;
+  }
+
+  const percentUsed = (spent / budget) * 100;
+  const progress = Math.min(Math.max(percentUsed, 0), 100);
+  progressBar.style.width = `${progress}%`;
+  progressTrack.setAttribute("aria-valuenow", String(Math.round(progress)));
+  progressTrack.classList.toggle("over-budget", spent > budget);
+
+  if (remaining < 0) {
+    remainingLabel.textContent = "Over budget by";
+    remainingValue.textContent = formatMoney(Math.abs(remaining));
+    budgetMessage.textContent = "You’re over this month’s budget, so no points are earned yet.";
+  } else if (remaining === 0) {
+    remainingLabel.textContent = "Left in budget";
+    remainingValue.textContent = formatMoney(0);
+    budgetMessage.textContent = "You’ve used your full budget. Spend less than your budget to earn points.";
+  } else {
+    remainingLabel.textContent = "Left in budget";
+    remainingValue.textContent = formatMoney(remaining);
+    budgetMessage.textContent = points > 0
+      ? `You’re under budget! You’ve earned ${points} point${points === 1 ? "" : "s"} so far this month.`
+      : "You’re under budget. Leave at least ₹100 unspent to earn your first point.";
+  }
 }
 
 function showFormMessage(message, success = false) {
@@ -483,6 +549,7 @@ async function loadSummary() {
 
 async function refreshDashboard() {
   listMessage.textContent = "";
+  updateBudgetDashboard();
 
   await Promise.all([
     loadTransactions(),
@@ -528,6 +595,19 @@ document.getElementById("addButton").addEventListener("click", () => {
 });
 
 cancelButton.addEventListener("click", resetForm);
+
+budgetForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const budget = Number(budgetAmountInput.value);
+  if (!Number.isFinite(budget) || budget <= 0 || budget > 1000000000) {
+    return;
+  }
+
+  const budgets = JSON.parse(localStorage.getItem("fintrack.budgets") || "{}");
+  budgets[currentMonthKey()] = budget;
+  localStorage.setItem("fintrack.budgets", JSON.stringify(budgets));
+  updateBudgetDashboard();
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();

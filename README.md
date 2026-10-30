@@ -7,6 +7,9 @@ A static personal finance dashboard for recording and reviewing income and expen
 
 - Add, edit, and delete income and expense transactions.
 - See income, expenses, remaining balance, and a category chart.
+- Choose Rose Quartz, Lavender Dream, Peach Blossom, or Berry Sweet colors.
+- Switch between light and dark mode.
+- Set a monthly budget and earn 1 point for every ₹100 remaining under budget.
 - Search and filter transaction history.
 - Works as a static website; no server or account is required.
 

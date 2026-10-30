@@ -328,6 +328,86 @@ h2 {
   margin: 0;
 }
 
+.budget-panel {
+  margin-bottom: 22px;
+}
+
+.budget-heading {
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.budget-heading h2 {
+  margin-bottom: 5px;
+}
+
+.points-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.budget-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+}
+
+.budget-form label {
+  display: block;
+  margin: 0 0 7px;
+}
+
+.budget-form button {
+  min-width: 130px;
+}
+
+.budget-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0 12px;
+}
+
+.budget-details > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--text-soft);
+  font-size: 13px;
+}
+
+.budget-details strong {
+  color: var(--text);
+  font-size: 16px;
+}
+
+.budget-progress-track {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-soft);
+}
+
+.budget-progress-bar {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.budget-progress-track.over-budget .budget-progress-bar {
+  background: var(--red);
+}
+
+.budget-message {
+  margin: 10px 0 0;
+}
+
 .content-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -612,6 +692,19 @@ footer {
   .welcome {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .budget-form {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-form button {
+    width: 100%;
+  }
+
+  .budget-details {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .welcome .primary-button {
