@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 // Create or open the SQLite database.
 const db = new Database(
-  path.join(__dirname, "expenses.db")
+  process.env.DATABASE_PATH || path.join(__dirname, "expenses.db")
 );
 
 db.pragma("journal_mode = WAL");

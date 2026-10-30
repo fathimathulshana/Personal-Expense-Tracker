@@ -102,3 +102,13 @@ FinTrack is a personal expense tracking application developed to help users mana
 This project was developed as an academic project using HTML, CSS, JavaScript, Node.js, Express.js, and SQLite.
 
 Thank you for using FinTrack!
+
+## Deploying the application
+
+This project is a Node.js/Express application with a SQLite database. GitHub Pages can only publish static files, so it cannot run the API or database. Deploy the repository as a Node web service instead (for example, on Render):
+
+1. Create a new **Web Service** and connect this GitHub repository.
+2. Set the build command to `npm install` and the start command to `npm start`.
+3. Keep in mind that the free service uses temporary storage, so SQLite records may be lost when the service restarts or redeploys.
+
+The included `render.yaml` provides free web-service settings when creating a Render service from the repository. Use the service URL as the published website URL; the GitHub repository URL displays the README. To keep SQLite data across restarts, switch to a paid plan with a persistent disk and set `DATABASE_PATH` to a location on that disk.
