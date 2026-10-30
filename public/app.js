@@ -59,21 +59,78 @@ function showFormMessage(message, success = false) {
 }
 
 async function apiRequest(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      ...(options.body ? { "Content-Type": "application/json" } : {}),
-      ...options.headers
-    }
-  });
+  const transactions = JSON.parse(localStorage.getItem("fintrack.transactions") || "[]");
+  const method = options.method || "GET";
+  const parsedUrl = new URL(url, window.location.href);
+  const transactionPath = parsedUrl.pathname.match(/\/api\/transactions(?:\/(\d+))?$/);
 
-  const data = await response.json().catch(() => ({}));
+  if (method === "GET" && parsedUrl.pathname.endsWith("/api/summary")) {
+    const income = transactions
+      .filter((item) => item.type === "income")
+      .reduce((sum, item) => sum + Number(item.amount), 0);
+    const expenses = transactions
+      .filter((item) => item.type === "expense")
+      .reduce((sum, item) => sum + Number(item.amount), 0);
+    const grouped = new Map();
+    transactions.filter((item) => item.type === "expense").forEach((item) => {
+      grouped.set(item.category, (grouped.get(item.category) || 0) + Number(item.amount));
+    });
 
-  if (!response.ok) {
-    throw new Error(data.error || "Something went wrong.");
+    return {
+      income,
+      expenses,
+      balance: income - expenses,
+      categories: [...grouped].map(([category, total]) => ({ category, total }))
+    };
   }
 
-  return data;
+  if (method === "GET" && transactionPath) {
+    const search = (parsedUrl.searchParams.get("search") || "").toLowerCase();
+    const type = parsedUrl.searchParams.get("type") || "";
+    const category = parsedUrl.searchParams.get("category") || "";
+    return transactions
+      .filter((item) => item.description.toLowerCase().includes(search))
+      .filter((item) => !type || item.type === type)
+      .filter((item) => !category || item.category === category)
+      .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  }
+
+  if (!transactionPath) throw new Error("Unsupported action.");
+
+  const id = transactionPath[1] ? Number(transactionPath[1]) : null;
+  if (method === "DELETE") {
+    const remaining = transactions.filter((item) => item.id !== id);
+    if (remaining.length === transactions.length) throw new Error("Transaction not found.");
+    localStorage.setItem("fintrack.transactions", JSON.stringify(remaining));
+    return { message: "Transaction deleted successfully." };
+  }
+
+  const transaction = JSON.parse(options.body || "{}");
+  if (
+    !["income", "expense"].includes(transaction.type) ||
+    !transaction.description?.trim() ||
+    !Number.isFinite(Number(transaction.amount)) || Number(transaction.amount) <= 0 ||
+    !categories[transaction.type]?.includes(transaction.category) ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(transaction.date)
+  ) {
+    throw new Error("Please enter valid transaction details.");
+  }
+
+  if (method === "POST") {
+    const created = { ...transaction, id: Date.now() * 1000 + Math.floor(Math.random() * 1000) };
+    localStorage.setItem("fintrack.transactions", JSON.stringify([...transactions, created]));
+    return created;
+  }
+
+  if (method === "PUT") {
+    const index = transactions.findIndex((item) => item.id === id);
+    if (index < 0) throw new Error("Transaction not found.");
+    transactions[index] = { ...transaction, id };
+    localStorage.setItem("fintrack.transactions", JSON.stringify(transactions));
+    return transactions[index];
+  }
+
+  throw new Error("Unsupported action.");
 }
 
 function populateCategories() {
@@ -303,7 +360,7 @@ async function loadTransactions() {
     const cell = document.createElement("td");
     cell.colSpan = 6;
     cell.className = "empty-state";
-    cell.textContent = "Could not load transactions. Check the server.";
+    cell.textContent = "Could not load transactions from this browser.";
     row.appendChild(cell);
     transactionList.appendChild(row);
 

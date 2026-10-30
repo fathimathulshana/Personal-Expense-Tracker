@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: personal-expense-tracker
-    runtime: node
-    plan: free
-    buildCommand: npm install
-    startCommand: npm start
