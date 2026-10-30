@@ -17,6 +17,8 @@ const filterCategory = document.getElementById("filterCategory");
 const transactionList = document.getElementById("transactionList");
 const listMessage = document.getElementById("listMessage");
 const themeSelect = document.getElementById("themeSelect");
+const modeToggle = document.getElementById("modeToggle");
+const modeLabel = document.getElementById("modeLabel");
 
 const categories = {
   income: ["Salary", "Freelance", "Investment", "Gift", "Other"],
@@ -69,6 +71,22 @@ function applyTheme(theme) {
 
 themeSelect.addEventListener("change", () => applyTheme(themeSelect.value));
 applyTheme(localStorage.getItem("fintrack.theme") || "pink");
+
+function applyMode(mode) {
+  const selectedMode = mode === "dark" ? "dark" : "light";
+  document.body.dataset.mode = selectedMode;
+  const isDark = selectedMode === "dark";
+  modeToggle.setAttribute("aria-pressed", String(isDark));
+  modeLabel.textContent = isDark ? "Light mode" : "Dark mode";
+  modeToggle.querySelector("[aria-hidden]").textContent = isDark ? "☀" : "☾";
+  localStorage.setItem("fintrack.mode", selectedMode);
+}
+
+modeToggle.addEventListener("click", () => {
+  applyMode(document.body.dataset.mode === "dark" ? "light" : "dark");
+  refreshDashboard();
+});
+applyMode(localStorage.getItem("fintrack.mode") || "light");
 
 async function apiRequest(url, options = {}) {
   const transactions = JSON.parse(localStorage.getItem("fintrack.transactions") || "[]");
@@ -398,6 +416,11 @@ function renderChart(categoryData) {
   chartMessage.classList.add("hidden");
   context.classList.remove("hidden");
 
+  const styles = getComputedStyle(document.body);
+  const chartColors = Array.from({ length: 8 }, (_, index) =>
+    styles.getPropertyValue(`--chart-${index + 1}`).trim()
+  );
+
   chart = new Chart(context, {
     type: "doughnut",
     data: {
@@ -405,17 +428,8 @@ function renderChart(categoryData) {
       datasets: [{
         label: "Expenses",
         data: categoryData.map((item) => item.total),
-        backgroundColor: [
-          "#4f46e5",
-          "#10b981",
-          "#f59e0b",
-          "#ef4444",
-          "#06b6d4",
-          "#8b5cf6",
-          "#ec4899",
-          "#94a3b8"
-        ],
-        borderColor: "#ffffff",
+        backgroundColor: chartColors,
+        borderColor: styles.getPropertyValue("--surface").trim(),
         borderWidth: 3,
         hoverOffset: 5
       }]
@@ -425,7 +439,10 @@ function renderChart(categoryData) {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          position: "bottom"
+          position: "bottom",
+          labels: {
+            color: getComputedStyle(document.body).getPropertyValue("--text-soft").trim()
+          }
         },
         tooltip: {
           callbacks: {

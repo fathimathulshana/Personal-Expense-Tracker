@@ -19,6 +19,14 @@
   --green-soft: #e1f7ed;
   --red: #d34858;
   --red-soft: #ffeaed;
+  --chart-1: #d63384;
+  --chart-2: #f472b6;
+  --chart-3: #fb7185;
+  --chart-4: #c026d3;
+  --chart-5: #e879a9;
+  --chart-6: #f9a8d4;
+  --chart-7: #be185d;
+  --chart-8: #fda4af;
   --white: var(--surface);
 }
 
@@ -32,6 +40,14 @@ body[data-theme="lavender"] {
   --border: #e3d8f5;
   --muted: #84799a;
   --focus: #d9c9ff;
+  --chart-1: #8b5cf6;
+  --chart-2: #a78bfa;
+  --chart-3: #c084fc;
+  --chart-4: #7c3aed;
+  --chart-5: #d8b4fe;
+  --chart-6: #6d28d9;
+  --chart-7: #b794f4;
+  --chart-8: #e9d5ff;
 }
 
 body[data-theme="peach"] {
@@ -44,6 +60,14 @@ body[data-theme="peach"] {
   --border: #f2ddd2;
   --muted: #957c72;
   --focus: #ffd1bb;
+  --chart-1: #e8755b;
+  --chart-2: #fb923c;
+  --chart-3: #f4a261;
+  --chart-4: #e76f51;
+  --chart-5: #ffc6a8;
+  --chart-6: #d97757;
+  --chart-7: #f2a07b;
+  --chart-8: #fdba9a;
 }
 
 body[data-theme="berry"] {
@@ -56,6 +80,27 @@ body[data-theme="berry"] {
   --border: #efd2df;
   --muted: #907587;
   --focus: #f4bfd4;
+  --chart-1: #be3973;
+  --chart-2: #e05297;
+  --chart-3: #f472b6;
+  --chart-4: #9d174d;
+  --chart-5: #c026d3;
+  --chart-6: #f0abca;
+  --chart-7: #db2777;
+  --chart-8: #fb7185;
+}
+
+body[data-mode="dark"] {
+  --page-bg: #17121a;
+  --surface: #241d28;
+  --surface-soft: #302633;
+  --text: #f8edf5;
+  --text-soft: #e1cad8;
+  --border: #493847;
+  --muted: #b9a4b4;
+  --focus: #87516e;
+  --green-soft: #18392f;
+  --red-soft: #422731;
 }
 
 * {
@@ -65,6 +110,7 @@ body[data-theme="berry"] {
 body {
   margin: 0;
   min-height: 100vh;
+  color: var(--text);
   background: var(--page-bg);
 }
 
@@ -132,6 +178,16 @@ select:focus-visible {
   background-color: var(--surface);
   color: var(--text);
   border-color: var(--border);
+}
+
+.mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 7px 11px;
+  white-space: nowrap;
 }
 
 .topbar-label,
@@ -539,6 +595,13 @@ footer {
 
   .topbar-tools {
     gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .mode-toggle {
+    font-size: 11px;
+    padding: 6px 8px;
   }
 
   .container {
